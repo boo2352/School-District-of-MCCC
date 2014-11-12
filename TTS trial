@@ -1,0 +1,44 @@
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;   
+
+import java.util.Scanner;
+
+public class TTS {
+
+ private static final String VOICENAME = "kevin16";
+ private String text; // string to speech
+
+ public TTS(String text) {
+  this.text = text;
+ }
+public TTS(){
+	text = "";
+}
+ public void speak(String theText) {
+  Voice voice;
+  VoiceManager voiceManager = VoiceManager.getInstance();
+  voice = voiceManager.getVoice(VOICENAME);
+  voice.allocate();
+  voice.speak(theText);
+ }
+
+ public static void main(String[] args) {
+	 @SuppressWarnings("resource")
+	Scanner keyboard = new Scanner(System.in);//create scanner for input
+	 System.out.println("type some text");//get some text to play with
+	 String text = keyboard.nextLine();
+	 
+  TTS speakText = new TTS();
+  speakText.speak(text);//read the text that was inputted
+  
+  //split string into individual words
+  String[] indivWords = text.split(" ");    
+  
+  speakText.speak(indivWords[1]);//read the second word
+  
+//print out each word separately
+  for ( String theWords : indivWords) {
+        System.out.println(theWords);
+   }
+ }
+}
