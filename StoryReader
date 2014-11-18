@@ -1,0 +1,191 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JTextPane;
+
+import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
+
+import javax.swing.JButton;
+
+import java.io.*;
+import java.util.Scanner;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+
+@SuppressWarnings("serial")
+public class StoryReader extends JFrame  {
+
+	private JTextPane storyText;//the pane holding the story text
+	private JPanel contentPane;// the main panel
+	//this is the text being used for development
+	private String storySource = "D:/Java things/eclipse things/ZFinalProjectWorking/THE WOLF AND THE KID.txt";
+private String selectedWord = "";//the word highlighted by user --will be spoken
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					StoryReader frame = new StoryReader();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * @throws IOException 
+	 */
+	public StoryReader() throws IOException {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 600);
+		contentPane = new JPanel();//create a panel
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		/* add a scroll pane to the panel
+		 * 
+		 */
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(100, 0, 680, 550);
+		contentPane.add(scrollPane);
+		
+		/**add a text panel to contain the story to be read
+		 * 
+		 */
+		storyText = new JTextPane();
+		storyText.setText(null);
+		storyText.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		scrollPane.setViewportView(storyText);
+		
+		/**this is a mouseListener to read word that is highlighted
+		 * double click in the word to have it read (ALTHOUGH THIS GIVES OUT OF MEMORY ERROR)
+		 * click and drag to have section of text read -- can use for individual word
+		 */
+		storyText.addMouseListener(new MouseAdapter() {   
+            @Override
+            public void mouseReleased(MouseEvent e) {
+               selectedWord = storyText.getSelectedText();
+               System.out.println(selectedWord);
+               TTSreadtext speakWord = new TTSreadtext();
+				  speakWord.speak(selectedWord);
+            }
+        });
+		
+		/**create button to enter story into storyText pane
+		 * 
+		 */
+		JButton newText = new JButton("Get Story");
+		newText.addActionListener(new setTextListener());
+		newText.setBounds(2, 37, 89, 23);
+		contentPane.add(newText);
+		
+		/**create button that will read entire story
+		 * MAY NOT NEED THIS-- can highlight any text and have it read
+		 */
+		JButton readText = new JButton("Read Story");
+		readText.addActionListener(new setReadListener());
+		readText.setBounds(2, 81, 89, 23);
+		contentPane.add(readText);
+		
+		//create button that will read selected word -- not currently being used; can change purpose of button or delete
+		JButton readWord = new JButton("Read Word");
+		//readWord.addActionListener(new setWordListener());
+		readWord.setBounds(1, 127, 89, 23);
+		contentPane.add(readWord);
+	}
+
+	/**
+	 * @return the storySource
+	 */
+	public String getStorySource() {
+		return storySource;
+	}
+
+	/**
+	 * @param storySource the storySource to set
+	 */
+	public void setStorySource(String storySource) {
+		this.storySource = storySource;
+	}		
+			
+	/**inner class to implement newText button that adds story to text panel
+	 *
+	 */
+	public class setTextListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			try {
+				storyText.setText(getStory(getStorySource()));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	}
+	}
+		/**inner class for readText button
+		 *
+		 */
+		public class setReadListener implements ActionListener{
+			public void actionPerformed(ActionEvent e){
+				
+				//read the text
+				TTSreadtext speakText = new TTSreadtext();//create TTS object
+				  String textToSpeak = storyText.getText();
+				  speakText.speak(textToSpeak);
+		}
+		}
+		/*REMOVED THIS, but it will use button to read selected word
+		 *   
+		 */
+//		//inner class for readWord button
+//				public class setWordListener implements ActionListener{	
+//					public void actionPerformed(ActionEvent e){
+//						//get the text
+//						String theWord = storyText.getSelectedText();
+//						//read the word
+//						TTSreadtext speakText = new TTSreadtext();//create TTS object
+//						  speakText.speak(theWord);
+//				}
+//				}
+		
+
+
+
+	/**get the textfile of the story for the text panel
+	 * 
+	 * @param fileLoc the location of the text file
+	 * @return the text from the file loc
+	 * @throws IOException
+	 */
+	public String getStory(String fileLoc) throws IOException{
+     //open file
+  File file = new File(fileLoc);
+  Scanner inputFile = new Scanner(file);
+     String storyText = "";
+  //read lines until none left
+  while(inputFile.hasNext())
+   storyText += (inputFile.nextLine()+"\n");// add each line to the text with line feed
+   
+  inputFile.close();
+  return storyText;
+}
+}
