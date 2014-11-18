@@ -1,0 +1,50 @@
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager; 
+
+public class TTSreadtext  {
+
+ private static final String VOICENAME = "kevin16";//the default voice
+ private String text; // string to speak
+ 
+/**constructor 
+ * 
+ * @param text the text to be read
+ */
+ 
+ public TTSreadtext(String text) {
+  this.text = text;
+ }
+
+ /**
+  * default constructor
+  */
+ public TTSreadtext(){
+	text = "";
+}
+
+ /**
+ * @return the text the text to be read
+ */
+public String getText() {
+	return text;
+}
+/**
+ * @param text the text to set
+ */
+public void setText(String text) {
+	this.text = text;
+}
+
+/**
+ * create the voice
+ * @param theText the text to speak
+ */
+public void speak(String theText) {
+  Voice voice;
+  VoiceManager voiceManager = VoiceManager.getInstance();
+  voice = voiceManager.getVoice(VOICENAME);
+  voice.allocate();
+  voice.speak(theText);
+ }
+
+}
