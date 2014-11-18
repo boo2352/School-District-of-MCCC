@@ -1,4 +1,4 @@
-import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.Voice;// source for these http://moderntone.blogspot.com/2013/02/freetts-tutorial.html
 import com.sun.speech.freetts.VoiceManager; 
 
 public class TTSreadtext  {
